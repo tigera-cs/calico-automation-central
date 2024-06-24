@@ -2,6 +2,8 @@
 
 ![Calico Logo](/images/logo/Tigera-Logo-Transparent.png)
 
+## What the Script Does:
+
 Automate the installation of Calico Enterprise on Kubernetes clusters using Terraform. This repository provides all necessary resources and configurations to set up Calico Enterprise, including the EBS CSI driver, storage classes, namespaces, secrets, and custom resources.
 
 ## Table of Contents

@@ -37,11 +37,15 @@ cd calico-enterprise-terraform
 
 ## Usage
 
-- Initialize Terraform: 
+- Initialize Terraform:
+```bash 
   terraform init
+```
 - Review and apply the Terraform plan:
+```bash 
   terraform plan
   terraform apply
+```
 
 This will:
 - Install Helm if it is not already installed.
@@ -88,6 +92,3 @@ We welcome contributions from the community! To contribute, follow these steps:
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
-
-
-

@@ -1,6 +1,6 @@
 # Calico Enterprise Installation with Terraform
 
-![Calico Logo](https://www.tigera.io/wp-content/uploads/2020/07/Tigera-Logo-01.svg)
+![Calico Logo](/automation-scripts-customer-success/images/logo/Tigera-Logo-Transparent.png)
 
 Automate the installation of Calico Enterprise on Kubernetes clusters using Terraform. This repository provides all necessary resources and configurations to set up Calico Enterprise, including the EBS CSI driver, storage classes, namespaces, secrets, and custom resources.
 

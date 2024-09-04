@@ -1,6 +1,8 @@
 
 # Kubernetes Network Policy Unused Endpoint Finder
 
+![Calico Logo](/images/logo/Tigera-Logo-Transparent.png)
+
 This script is designed to list all native Kubernetes network policies that have zero endpoints attached to them. It is useful for identifying and potentially cleaning up unused policies in your Kubernetes cluster.
 
 ## Table of Contents

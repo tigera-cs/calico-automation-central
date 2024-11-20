@@ -1,0 +1,25 @@
+{{ if and .Values.mgmtclustercert (eq .Values.mgmtclustercert.enabled true) }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tigera-manager-man
+  namespace: tigera-manager
+  annotations:
+#    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    external-dns.alpha.kubernetes.io/hostname: leonargoman.training.tigera.ca 
+    kubernetes.io/ingress.class: "nginx"
+#    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+  - host: leonargoman.training.tigera.ca 
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tigera-manager
+            port:
+              number: 9443
+{{ end }}

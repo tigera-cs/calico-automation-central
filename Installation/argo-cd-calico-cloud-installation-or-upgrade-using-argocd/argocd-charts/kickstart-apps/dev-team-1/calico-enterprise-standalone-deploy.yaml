@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ce-standalone-app-of-apps
+  annotations:
+    argocd.argoproj.io/sync-wave: "-100"
+spec:
+  destination:
+    name: in-cluster
+    namespace: argocd
+  source:
+    path: argo-apps/calico-enterprise-standalone/dev-team-1
+    repoURL: 'git@github.com:VerodaClient/argocd-charts.git'
+    targetRevision: HEAD
+  project: infra-apps
+  syncPolicy:
+    automated:
+      selfHeal: true
+  syncWaves:
+  - name: wave1
+    applications:
+    - sealed-secrets
+  - name: wave2
+    applications:
+    - ingress-nginx
+  - name: wave3
+    applications:
+    - calico-enterprise-1
+  - name: wave4
+    applications:
+    - calico-ent-configs
+

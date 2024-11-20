@@ -1,0 +1,187 @@
+---
+# WARNING: this file is maintained by Ansible
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: app.fis-hello-world-online
+  namespace: fis-hello-world
+spec:
+  tier: app
+  order: 10
+  serviceAccountSelector: app.kubernetes.io/name == "fis-hello-world-online"
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        ports:
+          - 5432
+        domains:
+          - 'fis-hello-world-rds-001.cluster-ckwpoco5zzbq.eu-central-1.rds.amazonaws.com'
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: target == "fis-platform-msk-db2"
+        namespaceSelector: global()
+        ports:
+          - 9094
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        domains:
+          - 'fis-hewor-assets-001-2b585e62.s3.eu-central-1.amazonaws.com'
+          - 'bucket.vpce-0554c813ad0a2a85f-vhjt67ca.s3.eu-central-1.vpce.amazonaws.com'
+        ports:
+          - 443
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        selector: target == "aws-sts"
+        namespaceSelector: global()
+        ports:
+          - 443
+  types:
+    - Egress
+---
+# This policy is used to perform cert-checks
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: app.fis-hello-world-online-custom
+spec:
+  tier: app
+  order: 10
+  serviceAccountSelector: app.kubernetes.io/name == "fis-hello-world-online"
+  egress:
+    - action: Allow
+      protocol: TCP
+      source: {}
+      destination:
+        domains:
+          - 'dynamodb.eu-central-1.amazonaws.com'
+          - 'gatus.internal.devinfra.fps.hlag.com'
+        ports:
+          - 443
+  types:
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  labels:
+    app.kubernetes.io/instance: argo-events
+    projectcalico.org/tier: infra
+  name: infra.argo-events
+  namespace: argo-events
+spec:
+  egress:
+  - action: Allow
+    destination:
+      namespaceSelector: kubernetes.io/metadata.name == "default"
+      ports:
+      - 443
+      selector: component == "apiserver"
+    protocol: TCP
+    source: {}
+  order: 10
+  tier: infra
+  types:
+  - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  labels:
+    app.kubernetes.io/component: argo-workflows
+    app.kubernetes.io/instance: argo-workflows
+    app.kubernetes.io/name: argo-workflows
+    app.kubernetes.io/part-of: argo-workflows
+  name: infra.argo-workflows
+  namespace: argo
+spec:
+  egress:
+  - action: Allow
+    destination:
+      namespaceSelector: kubernetes.io/metadata.name == "default"
+      ports:
+      - 443
+      selector: component == "apiserver"
+    protocol: TCP
+    source: {}
+  - action: Allow
+    destination:
+      namespaceSelector: global()
+      ports:
+      - 80
+      selector: target == "aws-imds"
+    protocol: TCP
+    source: {}
+  - action: Allow
+    destination:
+      namespaceSelector: global()
+      ports:
+      - 443
+      selector: target == "aws-ec2"
+    protocol: TCP
+    source: {}
+  - action: Allow
+    destination:
+      namespaceSelector: global()
+      ports:
+      - 443
+      selector: target == "aws-sts"
+    protocol: TCP
+    source: {}
+  - action: Allow
+    destination:
+      namespaceSelector: global()
+      ports:
+      - 443
+      selector: target == "aws-kms"
+    protocol: TCP
+    source: {}
+  - action: Allow
+    destination:
+      domains:
+      - argo-workflows.internal.devmgmt.fps.hlag.com
+      ports:
+      - 443
+    protocol: TCP
+    source: {}
+  - action: Allow
+    destination:
+      namespaceSelector: global()
+      ports:
+      - 443
+      selector: target == "hlag-gitlab"
+    protocol: TCP
+    source: {}
+  - action: Allow
+    destination:
+      namespaceSelector: global()
+      ports:
+      - 443
+      selector: target == "microsoft-azure-ad"
+    protocol: TCP
+    source: {}
+  order: 10
+  tier: infra
+  types:
+  - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: security.allow-all
+  namespace: default
+spec:
+  tier: security
+  egress:
+    - action: Allow
+      source: {}
+      destination: {}
+  types:
+    - Egress

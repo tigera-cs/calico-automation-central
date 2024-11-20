@@ -1,0 +1,54 @@
+installer:
+  # ClusterName is the name this cluster should appear as in the Calico Cloud UI.
+  # The value passed here should match the name used when creating the Managed Cluster in
+  # the Calico Cloud UI.
+  # Note that ClusterName cannot be modified once it is set.
+  # Required field.
+  clusterName: "leons-argocd-cluster"
+
+  calicoCloudVersion: "v20.0.1"
+  # ResourceVersion is a random value that, when modified, will force a reinstall.
+  resourceVersion: ""
+
+  # UploadDiags enables automatic upload of diagnostics bundles to Calico Cloud, viewable by the support team.
+  uploadDiags: false
+
+  # registry specifies a private registry to use for all images.
+  registry: ""
+
+  # imagePath is an optional field which can be used to control the 'subdirectories'
+  # where Tigera images are located in the private registry.
+  imagePath: ""
+
+  components:
+    imageAssurance:
+      state: Disabled
+    securityPosture:
+      state: Disabled
+    runtimeSecurity:
+      state: Disabled
+
+# apiKey is the key generated in the Calico Cloud UI when adding a new managed cluster.
+# Required field for installs initiated from the Calico Cloud UI.
+apiKey: ""
+
+image:
+  # Overrides the image tag
+  tag: ""
+
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 300Mi
+  requests:
+    cpu: 200m
+    memory: 200Mi
+
+# caBundleSecretName is the name of the secret in the calico-cloud namespace to use as CA certificates.
+# it should contain key named "ca-certificates.crt".
+# it will be mounted into the pod at /etc/ssl/certs
+caBundleSecretName: ""

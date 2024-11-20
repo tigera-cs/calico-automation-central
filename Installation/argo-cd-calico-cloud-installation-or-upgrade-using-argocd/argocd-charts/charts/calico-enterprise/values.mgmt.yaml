@@ -1,0 +1,143 @@
+mgmtclustercert:
+  enabled: true
+tigera-operator:
+  imagePullSecrets: # ideally we should not need this but there could be a bug in the helm-charts
+    tigera-pull-secret: unusedvalue
+  installation:
+    enabled: true
+    variant: TigeraSecureEnterprise
+    kubernetesProvider: "EKS"
+    imagePullSecrets:
+      - name: tigera-pull-secret
+
+  defaultFelixConfiguration:
+    enabled: true
+    floatingIPs: Disabled
+    flowLogsEnableHostEndpoint: true
+    healthPort: 9099
+    logDebugFilenameRegex: serviceindex|calc_graph
+    logSeverityScreen: Debug
+    prometheusMetricsEnabled: true
+    reportingInterval: 0s
+    routeTableRange:
+      max: 99
+      min: 65
+
+  monitor:
+    enabled: true
+    externalPrometheus:
+      namespace: monitoring
+      serviceMonitor:
+        labels:
+          release: prometheus-stack
+
+  logStorage:
+    eckOperatorStatefulSet:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: manager
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+    kibana:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: kibana
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+    linseedDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: tigera-linseed
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+    elasticsearchMetricsDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: tigera-elasticsearch-metrics
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+  compliance:
+    complianceServerDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: compliance-server
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+  manager:
+    managerDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: tigera-es-proxy
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+            - name: tigera-voltron
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+            - name: tigera-manager
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+  policyRecommendation:
+    policyRecommendationDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: policy-recommendation-controller
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+
+  tigera-prometheus-operator:
+    enabled: false
+
+  managementCluster:
+    enabled: true
+    address: leonargomcm.training.tigera.ca:9449 
+    service:
+      enabled: true
+      annotations:
+      - key: service.beta.kubernetes.io/aws-load-balancer-scheme
+        value: "internet-facing"
+      type: ClusterIP
+      port: 9449
+      targetPort: 9449
+      protocol: TCP
+
+  managedClusters:
+    enabled: true
+    clusters:
+    - name: my-managed-cluster
+      operatorNamespace: tigera-operator
+      certificate: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2VENDQWFVQ0ZCQzMxOVhDVDN2a2dFNzQwcnAxZlBNK0Fqdk1NQTBHQ1NxR1NJYjNEUUVCQ3dVQU1Ca3gKRnpBVkJnTlZCQU1URG5ScFoyVnlZUzEyYjJ4MGNtOXVNQjRYRFRJME1EZ3hOREV3TXpBek1Gb1hEVEkxTURneApOREV3TXpBek1Gb3dIVEViTUJrR0ExVUVBd3dTYlhrdGJXRnVZV2RsWkMxamJIVnpkR1Z5TUlJQklqQU5CZ2txCmhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBMWhlQUR1VWRPeVlzeTljSzg0bW1UaFkvL2RVSWlrRTMKbWZZeGpnMW81dUQrWUlBbGxmTXJkQ3JoY0xPaENJUGRrUHNWUEdWd2Y2MGxKYVBRV1diZUxEVWl0MG9vRXQ3RQpLVEYva05CQnkvcGg5YXpBWDZqRmRjZDNMdHhnTStKaFVRTG1XMC81RlBveWJzTFN1ZXJFTGovZlNvWit6Vy9OCmlkS3lXbElTdmVRSHNIVGR5WE1ia3ZTRXU0LytpUFY0akRjSnFJTVFESlBXTmFtTXVsRHJWajhJTFRaWkl5ZEsKR0cvcjlrT25VVmh4R2lHR20zdDNsYWtJc3czVDFPenQwcHptVHduYVZGUWx0YS9GNThpM09PVUFjYjQzZ3FPdwo1RXFGRnZMdElZVGdTdXJyNlAwWW9BN0hoRGNUZzEvK3l1K1BuaS9SeEJqSDhXc3hFSlhSYVFJREFRQUJNQTBHCkNTcUdTSWIzRFFFQkN3VUFBNElCQVFBUXBIaC9acldad2JIK012eGE1cW1DRzFOWGI1MG9kMFowMkNYZFBwVEoKelkwNmY4K0hwRUNNdTBjUlVGbTljU0QyUFhaQy9Td1k5MFVxZTdtT25tZ3NNL2ZURnhMQit2K1BFSm5FUVRDKwpZdWRKTUdEdzdlMVhaOHVJWkFVSmpQUHFOVmpJTlZGa3ZoWnNnamtiZ1M0YjByV1FnT0hRaE11eVAvbjRjM0ZkCjZ4YXN1dytGaE5UdXY5cjBZcnB6cytIbmhScmRtVGNFYnJ6QW9MNWJ4dmdGMUo0WmFzc1BxdjlreWRpNDUwenIKcVFzUG5SOUdSa0FLWU8vVUhINHV6MGVteStGUFRWMDhNMFl1YXllTEQ5VFFSeCs1b1ZSSW12NVJVWG5aVkhDZgp6YzdRd1lZQlc4bjNIQnp1aFRxcjl3eEVkRTdUZDVUZlk4a2xtTDRINTM5egotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+#    - name: my-managed-cluster-2
+#      operatorNamespace: tigera-operator
+#      certificate: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2ekNDQWFjQ0ZHdE5pTmdFbWgyM3JNY2JSQkJVN0FoRWlDVE5NQTBHQ1NxR1NJYjNEUUVCQ3dVQU1Ca3gKRnpBVkJnTlZCQU1URG5ScFoyVnlZUzEyYjJ4MGNtOXVNQjRYRFRJME1EZ3hOREV4TVRBMU5Wb1hEVEkxTURneApOREV4TVRBMU5Wb3dIekVkTUJzR0ExVUVBd3dVYlhrdGJXRnVZV2RsWkMxamJIVnpkR1Z5TFRJd2dnRWlNQTBHCkNTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFEWldiRHdyQm54d05hSlN0QWowMDMvRDdkN3BGa2cKQU1oVjUvaWE5blVkSFNsU29KOTZoNkVMSzBodlpOaEhCS3VDMytaVE15ZE5ZaGxKc0hxcEtPcWpsMVZrMHU4NgpOUGpsK0VTM2swYm9XTGdHY2hCcGNoRHdKUDhuaHVrc0h3UHBwQUhJMllLZStNVXBCWnIrYVR2TU1ObUhseWIzCjVqWndXOTF4YUtZdTJPdXdIL1dFL21uK3E5SXlWUlFXek95Y0hNbk9IK2UyUzZndW5VazA4OS96RE9tcjByUTYKVndNUDkrKzZTcXdla05oMlUxYlN1am53NzM4YndnWVgvT29abzVydGlrWjMyaWhyUFM1YWVsT3FISC9FTE9aZgplMlpvd3F6YXcxV2FMMmsrZFZFVTdocUtjWDRQOVN6YWpVRHA0ZU5jeVZHM2FHMFFPcEwwN1QySEFnTUJBQUV3CkRRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKSjVFL0JSOUNLMmFCSWlGNVdKV1lKMVlhb1BCcENDU3FIKzZ4bWIKZmhDOGhYMmswS21DZ2ZhM2QyRjY3VXNzZ1ZrWVR5OE40TTl3a1gwOEdiakpWdVFIZFhpd0t3WE1TaHE1YmZ4dApUb0E4RjZvTGxmQXhVNWtwZUFXd21VNnZsOE8rNVdlQWJJNGxISFErRHdLVlZZVHcya2JpRUdzTUxzeGczYVlZCmxOYVVpOExqanFmbnp4Z2lZQzlmb3BOTFc3MVYrdHhaU1NTT3I4SFV2eVlCeWJYZUFzZHovMEF4REc0eGFwd1YKcW50SWI5SDlmcnRXUVhXN0ZGTm4vUldzaC9yQjB6WFlnTnNBU05ycWFNSmtsNHA0djQwT3ZDUW8yb2d1WXduVwoxUkNsSnEyUGNPVjVJdkpuQmN4Mk9NUFBWOTZoVitkUVRGbXFESFRaR3BaUGMzTT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo= 

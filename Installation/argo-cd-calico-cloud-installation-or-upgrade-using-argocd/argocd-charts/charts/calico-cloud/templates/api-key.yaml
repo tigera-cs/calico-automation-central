@@ -1,0 +1,17 @@
+{{- if .Values.apiKey -}}
+
+{{- $apiKey := splitList ":" .Values.apiKey -}}
+{{- if len $apiKey | eq 3 -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-key
+data:
+  id: {{ index $apiKey 0 | b64enc }}
+  org-id: {{ index $apiKey 1 | b64enc }}
+  token: {{ index $apiKey 2 | b64enc }}
+{{- else -}}
+{{- fail "invalid apiKey" -}}
+{{ end }}
+{{- end -}}
+

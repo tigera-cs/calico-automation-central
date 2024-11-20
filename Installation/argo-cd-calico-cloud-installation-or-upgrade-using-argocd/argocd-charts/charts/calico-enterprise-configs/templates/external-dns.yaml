@@ -1,0 +1,63 @@
+{{ if and .Values.mgmtclustercert (eq .Values.mgmtclustercert.enabled true) }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: external-dns
+rules:
+- apiGroups: [""]
+  resources: ["services","endpoints","pods"]
+  verbs: ["get","watch","list"]
+- apiGroups: ["extensions","networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["get","watch","list"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["list","watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: external-dns-viewer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: external-dns
+subjects:
+- kind: ServiceAccount
+  name: external-dns
+  namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: external-dns
+  name: external-dns
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: external-dns
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: external-dns
+    spec:
+      serviceAccountName: external-dns
+      containers:
+      - name: external-dns
+        image: k8s.gcr.io/external-dns/external-dns:v0.10.2 
+        args:
+        - --source=service
+        - --source=ingress
+        - --domain-filter=training.tigera.ca
+        - --provider=aws
+        - --policy=sync
+        - --aws-zone-type=public
+        - --registry=txt
+        - --txt-owner-id=example-identifier
+      securityContext:
+        fsGroup: 65534 # For ExternalDNS to be able to read K8s and AWS token files
+{{ end }}

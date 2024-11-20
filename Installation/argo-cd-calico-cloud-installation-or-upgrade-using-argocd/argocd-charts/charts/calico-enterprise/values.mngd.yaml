@@ -1,0 +1,163 @@
+tigera-operator:
+  imagePullSecrets: # ideally we should not need this but there could be a bug in the helm-charts
+    tigera-pull-secret: unusedvalue
+  installation:
+    enabled: true
+    variant: TigeraSecureEnterprise
+    kubernetesProvider: "EKS"
+    imagePullSecrets:
+      - name: tigera-pull-secret
+    kubeletVolumePluginPath: "None"
+    typhaDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: calico-typha
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+    calicoNodeDaemonSet:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: calico-node
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+    calicoKubeControllersDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: calico-kube-controllers
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+    csiNodeDriverDaemonSet:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: calico-csi
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+
+  apiServer:
+    enabled: true
+    apiServerDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: calico-apiserver
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+  compliance:
+    complianceBenchmarkerDaemonSet:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: compliance-benchmarker
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+    complianceControllerDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: compliance-controller
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+    complianceSnapshotterDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: compliance-snapshotter
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+  intrusionDetection:
+    intrusionDetectionControllerDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: controller
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+      
+  logCollector:
+    fluentdDaemonSet:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: fluentd
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 7Mi
+  tigera-prometheus-operator:
+    enabled: false
+
+  defaultFelixConfiguration:
+    enabled: true
+    floatingIPs: Disabled
+    flowLogsEnableHostEndpoint: true
+    healthPort: 9099
+    logDebugFilenameRegex: serviceindex|calc_graph
+    logSeverityScreen: Debug
+    prometheusMetricsEnabled: true
+    reportingInterval: 0s
+    routeTableRange:
+      max: 99
+      min: 65
+
+  monitor:
+    enabled: true
+
+  manager:
+    enabled: false
+  logStorage:
+    enabled: false
+
+  managementClusterConnection:
+    enabled: true
+    guardianDeployment:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: tigera-guardian
+              resources:
+                requests:
+                  cpu: 1000m
+                  memory: 1500Mi
+                limits:
+                  memory: 1500Mi
+    managementClusterAddress: leonargomcm.training.tigera.ca:9449
+    management:
+      tls:
+        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURBekNDQWV1Z0F3SUJBZ0lCQVRBTkJna3Foa2lHOXcwQkFRc0ZBREFaTVJjd0ZRWURWUVFERXc1MGFXZGwKY21FdGRtOXNkSEp2YmpBZUZ3MHlOREF4TXpFeE1USTROVGhhRncweU9UQXhNamt4TVRJNE5UaGFNQmt4RnpBVgpCZ05WQkFNVERuUnBaMlZ5WVMxMmIyeDBjbTl1TUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCCkNnS0NBUUVBeU1zTjBITVRWRUN1Mnh4UUlrMDBuak05WHF5Q1E1YXl5Q2ZjTlRIUHFBUnJZYUFUWmlkelkzYXgKWGhCbDdDaG1lMThibEp1NGsvbUNNR01uY2VWUkdwQ2JUL2UvblZmL0lVY0dhRFdLN2tiQXZpcnU2b1NSWEFzaQo1MFlSMEZpYjRRajBOWmd3bCtBbFc3djJjYU10S2ljQVA3eGk2YWNsK21TT2lWU2tjaWlzMDREUnZXdFVoRDVRCk15Q1hMdGdkWVRWUkdCV21uUUcwYllrMFpKaVNTR3JwNWtSZmh1b2kwRk9WNldIQllGQnRpVnQrQ0Q0VzNnSlUKUXBlUUhncThwYkZuT3JXMkdJcUxHVUlTSHVkUmVISmlVNy8wVC9QelVkRnZWYndnczBnR3VjWHdsZW1GNnppVwo0VTJPemR1NmxIcjJzZWtnandHSUdKdlVqem82ZFFJREFRQUJvMVl3VkRBT0JnTlZIUThCQWY4RUJBTUNBcVF3CkR3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVTVvdXRNZEtpS3NVd3ZqYnFZbGVlaGpzaDRMc3cKRWdZRFZSMFJCQXN3Q1lJSGRtOXNkSEp2YmpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQVd1U000bHNSTFdWQgozbXdDY2dUWkJyTitVMVg2OStGNndYMVdwYlRkTyt4NVMzcFVjOTJ6OHBhWll3TndIVHFGMCt5ZThXbWRWU2pGClBiMEQwZlVpaXpBdXY3bTg4bytaZ3BBbEo3L25rZnlHeTZiYk9HK2FWcCtMaGJQK1R1UmVyWnMxNWtvbEVYbGUKZUxwd3N5aWZPSk9mSmFQWDcvSTVkR0lwMXNlbC9hU0E5eEVjbVF0WlFzU2k1M3lMeE93R0w3dWdOcXUxeEc5OQpjcGxLdnZ4Sm02M3NSa0t1REFsVXBxYmlKYlA3Y05MeDVzd091SVBBTjB6WlJQWGVjQldZS0VNSmZKSWN5eVhTCi9TTDNDb3V0cWtZQWZDclFydVl5NTQvT2xyVjJqT292MVIxTy92a1ZCREp3RDVrSklxRGJNTTZob1JkUnNCWDkKQ0VhNWt3dmozZz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K 
+    managed:
+      tls:
+        crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2VENDQWFVQ0ZCQzMxOVhDVDN2a2dFNzQwcnAxZlBNK0Fqdk1NQTBHQ1NxR1NJYjNEUUVCQ3dVQU1Ca3gKRnpBVkJnTlZCQU1URG5ScFoyVnlZUzEyYjJ4MGNtOXVNQjRYRFRJME1EZ3hOREV3TXpBek1Gb1hEVEkxTURneApOREV3TXpBek1Gb3dIVEViTUJrR0ExVUVBd3dTYlhrdGJXRnVZV2RsWkMxamJIVnpkR1Z5TUlJQklqQU5CZ2txCmhraUc5dzBCQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBMWhlQUR1VWRPeVlzeTljSzg0bW1UaFkvL2RVSWlrRTMKbWZZeGpnMW81dUQrWUlBbGxmTXJkQ3JoY0xPaENJUGRrUHNWUEdWd2Y2MGxKYVBRV1diZUxEVWl0MG9vRXQ3RQpLVEYva05CQnkvcGg5YXpBWDZqRmRjZDNMdHhnTStKaFVRTG1XMC81RlBveWJzTFN1ZXJFTGovZlNvWit6Vy9OCmlkS3lXbElTdmVRSHNIVGR5WE1ia3ZTRXU0LytpUFY0akRjSnFJTVFESlBXTmFtTXVsRHJWajhJTFRaWkl5ZEsKR0cvcjlrT25VVmh4R2lHR20zdDNsYWtJc3czVDFPenQwcHptVHduYVZGUWx0YS9GNThpM09PVUFjYjQzZ3FPdwo1RXFGRnZMdElZVGdTdXJyNlAwWW9BN0hoRGNUZzEvK3l1K1BuaS9SeEJqSDhXc3hFSlhSYVFJREFRQUJNQTBHCkNTcUdTSWIzRFFFQkN3VUFBNElCQVFBUXBIaC9acldad2JIK012eGE1cW1DRzFOWGI1MG9kMFowMkNYZFBwVEoKelkwNmY4K0hwRUNNdTBjUlVGbTljU0QyUFhaQy9Td1k5MFVxZTdtT25tZ3NNL2ZURnhMQit2K1BFSm5FUVRDKwpZdWRKTUdEdzdlMVhaOHVJWkFVSmpQUHFOVmpJTlZGa3ZoWnNnamtiZ1M0YjByV1FnT0hRaE11eVAvbjRjM0ZkCjZ4YXN1dytGaE5UdXY5cjBZcnB6cytIbmhScmRtVGNFYnJ6QW9MNWJ4dmdGMUo0WmFzc1BxdjlreWRpNDUwenIKcVFzUG5SOUdSa0FLWU8vVUhINHV6MGVteStGUFRWMDhNMFl1YXllTEQ5VFFSeCs1b1ZSSW12NVJVWG5aVkhDZgp6YzdRd1lZQlc4bjNIQnp1aFRxcjl3eEVkRTdUZDVUZlk4a2xtTDRINTM5egotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+        key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBMWhlQUR1VWRPeVlzeTljSzg0bW1UaFkvL2RVSWlrRTNtZll4amcxbzV1RCtZSUFsCmxmTXJkQ3JoY0xPaENJUGRrUHNWUEdWd2Y2MGxKYVBRV1diZUxEVWl0MG9vRXQ3RUtURi9rTkJCeS9waDlhekEKWDZqRmRjZDNMdHhnTStKaFVRTG1XMC81RlBveWJzTFN1ZXJFTGovZlNvWit6Vy9OaWRLeVdsSVN2ZVFIc0hUZAp5WE1ia3ZTRXU0LytpUFY0akRjSnFJTVFESlBXTmFtTXVsRHJWajhJTFRaWkl5ZEtHRy9yOWtPblVWaHhHaUdHCm0zdDNsYWtJc3czVDFPenQwcHptVHduYVZGUWx0YS9GNThpM09PVUFjYjQzZ3FPdzVFcUZGdkx0SVlUZ1N1cnIKNlAwWW9BN0hoRGNUZzEvK3l1K1BuaS9SeEJqSDhXc3hFSlhSYVFJREFRQUJBb0lCQVFEVDVZU1F1WUg2QmltMgpRd3dLeVVXNTZkbkNRUFRuNmU2L1N1WDNSQng4ejFuV1oxOU1EOWNGYmwrZGJaekgwY1FkZC9XbnhuclhVNmI5Cm55cGJJaTVwc05uQWNmeEIyUXhyL1JyV1dObVdxeVlEdzh6UG9UcDIvVXBnTGl4bGpmMWw4aW5QWE5NYVNSeGIKZGlhZGJ0aG5NajZ1QTNwRG1SSGxCSTRVU1VGVmdTbFZvWlBXUmhzM1I4Y0VaNGRzb0NhaU96UENTaVRZL2JrTQpXdDczc0svT2FxZ3dmVzR1YWlXMlovV3djTUo3V2YrOW1LeXBEWXpkd3hCZExpaUNZVHFiU0wzaHR0MFNVOUhLCnN5MXljNm1hUkxOT29YRXc3M2tXSUpkbVgwdk41MVJxOTdtcVBjRlp4SmFvMVFRTXVPbjFSU2FXYVNpaU8wM0UKVGZQU1lyOEJBb0dCQVBldWlKRDJ2QWg3ZlNnS2VuQjB3MklhcGN3enZ0TUkvQmNPclpKOXc4OVR5akdpWVJXNQpaWTNBbm1lL2tieStzN3dVOWx0a3ZnbUIrb3BRSWJWTnNGWXMvUFBydTFuYWhOYU5Qejg1bFVNZHdDaVNRK2VOCnFzeEJNRkp2T0g5czNwVmh6dkMwZjFqNlU3M0Y4cWdNQlhpL3hOZnpjaXRQQWlhZ1VreGtuSHlKQW9HQkFOMUkKTElXdjZPYzFEZXdHbUNPRnZ5UGxjaUh1SUc2R09wWHQyMUpSM1ZIQU5yOHdlYzhIM05FeTdpZ3dGaVZjbjZLaQpZZE0zWE5vRVNqaHZWQjFyeSs1ZGFFOWtvRGJkcmpBNTJDMDJFSFJRd3hRTDNla3hQVEdqVkJ6dDBYSGJWSXRSCm9jMVVSNlpCcDhyZkRhNGJTVDRSVThGZm53SVk1UXRaYVBacUpEWGhBb0dBSzY1R08zcW9NcjdFbGRrek9yMzgKNzBKUDF6R1JCOXJmeXBrMkYwM0N5TCs0T3dTdUpveXAwbFFVRzZ2M1lkZ29EcFdMMVJaeFJXLzg1WU80VGlkRApZQTlURlJtUDB3cnN2b0h1azVIdU53WDZLNjJQK0RoTjFQUHlON2VSdVRkVUVmaEw3THVJY2dMRDNnWVpBM1lMClNQNVpFdFRHWDhqeFVpcVlHUXp0WkRFQ2dZQmJ2cVRXK013enNFZUphR0tEdDl3NzRkR2tSN3FpbUh5SjFRaHQKNVF0QjdkUEZDVEEzcWliZmhhSkFmMDl2Uml2Wm5rRzQ5T2RHYlNqb3BSL1c0dTYyY1h2aUR2SnVUUkwvWTd4QgpZbjBIL01Razk1YVdMSmdXa0lVN1NVN2hTZktQb05UWThPeVQvZnkzbkN0cjJGeFJvNVY2UTA4RjY1UnJWREswCmwrVlRnUUtCZ0NXRmxOVDNHOGZzSWUrSWNndUs3UzB1K0QrRXhlRFJ3ck5HOWdSeGt0NWRkQTlLSm9rR2tCeUIKR3RXSDZydVhvTS9XRFM5RGJqZlFQbnNlS1hhREVzcnJzL3NPTHJqWFpVaHQwM3FzMGdQeEh1T3VPTnd4ZlN2bgpUM2J1dEtqMmMrcWFYSFJFWEgraVpnNWhzQThNRlpGRmlOYUorK2JqSDZSTFBZbEIvck16Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==

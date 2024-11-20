@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: calico-ent-configs
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+spec:
+  project: dev-team-1
+  source:
+    repoURL: 'git@github.com:VerodaClient/argocd-charts.git'
+    path: charts/calico-enterprise-configs
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values.standalone.yaml
+  destination:
+    name: ce-mgmt
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+    retry:
+      limit: 100
+      backoff:
+        duration: 60s
+        factor: 1
+        maxDuration: 5m
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: beats.beat.k8s.elastic.co
+      jsonPointers:
+        - /spec
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: env-custom-configs-ingress-nginx-admission
+#    - group: networking.k8s.io
+#      kind: Ingress
+#      namespace: tigera-manager
+#      name: tigera-manager-man
+#    - group: networking.k8s.io
+#      kind: Ingress
+#      namespace: tigera-manager
+#      name: tigera-manager-mcm
+#    - group: projectcalico.org
+#      kind: LicenseKey
+#      name: default

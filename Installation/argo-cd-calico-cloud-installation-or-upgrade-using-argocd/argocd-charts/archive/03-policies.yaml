@@ -1,0 +1,138 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: security.security-default-pass
+spec:
+  tier: security
+  order: 10000
+  ingress:
+    - action: Pass
+      source: {}
+      destination: {}
+  egress:
+    - action: Pass
+      source: {}
+      destination: {}
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: platform.platform-default-pass
+spec:
+  tier: platform
+  order: 10000
+  ingress:
+    - action: Pass
+      source: {}
+      destination: {}
+  egress:
+    - action: Pass
+      source: {}
+      destination: {}
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: platform.cluster-dns-allow-all
+spec:
+  tier: platform
+  order: 1
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        namespaceSelector: all()
+      destination:
+        selector: k8s-app == "kube-dns"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: UDP
+      source:
+        namespaceSelector: all()
+      destination:
+        selector: k8s-app == "kube-dns"
+        ports:
+          - '53'
+  egress:
+    - action: Allow
+      protocol: TCP
+      source:
+        namespaceSelector: all()
+      destination:
+        selector: k8s-app == "kube-dns"
+        ports:
+          - '53'
+    - action: Allow
+      protocol: UDP
+      source:
+        namespaceSelector: all()
+      destination:
+        selector: k8s-app == "kube-dns"
+        ports:
+          - '53'
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: security.quarantine
+spec:
+  order: -900
+  tier: security
+  selector: quarantine == "true"
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: crd.projectcalico.org/v1
+kind: NetworkPolicy
+metadata:
+  name: app.namespace-1-allow
+  namespace: namespace-1
+spec:
+  tier: app
+  order: 100
+  ingress:
+    - action: Allow
+      source:
+        selector: all()
+      destination: {}
+  egress:
+    - action: Allow
+      source: {}
+      destination:
+        selector: all()
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: crd.projectcalico.org/v1
+kind: NetworkPolicy
+metadata:
+  name: namespace-2-allow
+  namespace: namespace-2
+spec:
+  order: 100
+  ingress:
+    - action: Allow
+      source:
+        selector: all()
+      destination: {}
+  egress:
+    - action: Allow
+      source: {}
+      destination:
+        selector: all()
+  types:
+    - Ingress
+    - Egress
+

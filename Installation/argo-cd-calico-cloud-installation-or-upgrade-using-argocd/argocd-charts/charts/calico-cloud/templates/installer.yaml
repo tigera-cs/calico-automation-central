@@ -1,0 +1,9 @@
+{{- if not .Values.installer.clusterName -}}
+{{- fail "must specify installer.clusterName" -}}
+{{- end -}}
+apiVersion: operator.calicocloud.io/v1
+kind: Installer
+metadata:
+  name: default
+spec:
+{{ .Values.installer | toYaml | indent 2 }}

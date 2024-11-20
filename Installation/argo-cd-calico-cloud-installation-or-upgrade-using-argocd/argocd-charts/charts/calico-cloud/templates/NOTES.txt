@@ -1,0 +1,5 @@
+Thank you for installing Calico Cloud.
+
+Track the status of your install with the following command:
+
+    kubectl get installer default --namespace {{ .Release.Namespace }} -o jsonpath --template '{.status}' -w

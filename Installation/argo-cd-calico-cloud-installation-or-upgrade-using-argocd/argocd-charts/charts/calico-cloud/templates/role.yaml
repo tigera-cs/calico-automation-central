@@ -1,0 +1,246 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: calico-cloud-installer-role
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["operator.tigera.io", "operator.calicocloud.io", "image-assurance.operator.tigera.io", "calicocloud.io", "projectcalico.org", "crd.projectcalico.org", "lma.tigera.io", "cloudcores.operator.tigera.io"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions"]
+  verbs: ["get", "list", "create", "patch", "update"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterroles", "clusterrolebindings"]
+  verbs: ["create", "escalate"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterroles", "clusterrolebindings"]
+  verbs: ["get", "patch", "bind"]
+  resourceNames: ["tigera-license-updater", "tigera-operator", "tigera-operator-cloud", "cc-core-operator", "tigera-policy-recommendation", "tigera-image-assurance-runtime-cleaner", "calico-kube-controllers-image-assurance", "tigera-image-assurance-operator", "tigera-runtime-security-operator-role", "tigera-runtime-security-operator-rolebinding", "tigera-runtimesecurity-viewer", "tigera-runtimesecurity-viewer-binding", "tigera-runtimesecurity-editor", "tigera-runtimesecurity-editor-binding", "tigera-risk-system-generator", "tigera-runtime-reporter"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterroles", "clusterrolebindings"]
+  verbs: ["delete"]
+  resourceNames: ["calico-kube-controllers-image-assurance", "tigera-image-assurance-runtime-cleaner", "tigera-image-assurance-operator", "tigera-risk-system-generator"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterroles"]
+  verbs: ["delete"]
+  resourceNames: ["tigera-runtime-security-operator-role", "tigera-runtimesecurity-viewer", "tigera-runtimesecurity-editor"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterrolebindings"]
+  verbs: ["delete"]
+  resourceNames: ["tigera-runtime-security-operator-rolebinding", "tigera-runtimesecurity-viewer-binding", "tigera-runtimesecurity-editor-binding"]
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "list", "watch", "patch", "create", "update"]
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["delete"]
+  resourceNames: ["tigera-runtime-security", "tigera-risk-system", "tigera-image-assurance"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: calico-cloud-installer-ns-role
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create"]
+- apiGroups: [""]
+  resources: ["serviceaccounts", "secrets"]
+  verbs: ["get", "create", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "create", "patch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["create", "patch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["delete"]
+  resourceNames: ["tigera-image-assurance-operator", "tigera-runtime-security-operator"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings"]
+  verbs: ["get", "create", "patch", "escalate", "delete"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings"]
+  verbs: ["bind"]
+  resourceNames: ["cc-core-operator", "cc-core-operator-leader-election-role", "tigera-image-assurance-leader-election-role", "tigera-runtime-security-leader-election-role"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "update", "create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: calico-cloud-installer-kube-system-role
+  namespace: kube-system
+rules:
+- apiGroups: ["apps"]
+  resources: ["daemonsets"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["create", "list"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get", "watch", "patch", "delete"]
+  resourceNames: ["tigera-check-cni-conf-job"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get"]
+  resourceNames: ["kubeadm-config"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: calico-cloud-installer-tigera-operator-role
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["create", "patch"]
+- apiGroups: [""]
+  resources: ["serviceaccounts"]
+  verbs: ["create", "patch"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["patch"]
+  resourceNames: ["tigera-managed-cluster-connection"]
+{{- if .Values.imagePullSecrets }}
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["patch"]
+  resourceNames:
+{{- range $secret := .Values.imagePullSecrets }}
+    - {{ $secret.name }}
+{{- end }}
+{{- end }}
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["list", "create"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get"]
+  resourceNames: ["typha-ca"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: calico-cloud-installer-tigera-prometheus-role
+  namespace: tigera-prometheus
+rules:
+- apiGroups: [""]
+  resources: ["serviceaccounts"]
+  verbs: ["create", "patch", "update"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["create", "patch", "update"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["update", "patch"]
+  resourceNames: ["tigera-pull-secret"]
+---
+{{- if ne "Disabled" ((.Values.installer.components).imageAssurance).state }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: calico-cloud-installer-tigera-image-assurance-role
+  namespace: tigera-image-assurance
+rules:
+- apiGroups: [""]
+  resources: ["serviceaccounts"]
+  verbs: ["get", "create", "patch", "delete"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["patch"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings"]
+  verbs: ["get", "create", "patch", "escalate", "bind", "delete"]
+- apiGroups: ["apps"]
+  resources: ["daemonsets"]
+  verbs: ["get"]
+  resourceNames: ["tigera-image-assurance-crawdad"]
+---
+{{- end }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: calico-cloud-installer-sa-creator-role
+rules:
+- apiGroups: [""]
+  resources: ["serviceaccounts"]
+  verbs: ["get", "create", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: calico-cloud-installer-calico-system-role
+  namespace: calico-system
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["list"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "patch"]
+  resourceNames: ["active-operator", "cni-config"]
+- apiGroups: ["apps"]
+  resources: ["daemonsets"]
+  verbs: ["get"]
+  resourceNames: ["calico-node"]
+---
+{{- if ne "Disabled" ((.Values.installer.components).securityPosture).state }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: calico-cloud-installer-tigera-risk-system-role
+  namespace: tigera-risk-system
+rules:
+- apiGroups: [""]
+  resources: ["serviceaccounts"]
+  verbs: ["get", "create", "patch", "delete"]
+---
+{{- end }}
+{{- if ne "Disabled" ((.Values.installer.components).runtimeSecurity).state }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: calico-cloud-installer-tigera-runtime-security-role
+  namespace: tigera-runtime-security
+rules:
+- apiGroups: ["apps"]
+  resources: ["daemonsets"]
+  verbs: ["get"]
+  resourceNames: ["runtime-reporter"]
+- apiGroups: [""]
+  resources: ["serviceaccounts"]
+  verbs: ["get"]
+  resourceNames: ["tigera-runtime-reporter"]
+---
+{{- end }}

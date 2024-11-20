@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: calico-cloud-updater
+    {{- include "calico-cloud.labels" . | nindent 4 }}
+  name: {{ include "calico-cloud.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "calico-cloud.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        k8s-app: calico-cloud-updater
+        {{- include "calico-cloud.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{ if .Values.caBundleSecretName }}
+        - name: ca-certificates
+          secret:
+            secretName: {{ .Values.caBundleSecretName }}
+      {{ end }}
+      {{ range $secret := .Values.imagePullSecrets }}
+        - name: {{ $secret.name }}
+          secret:
+            secretName: {{ $secret.name }}
+      {{ end }}
+      containers:
+        - args:
+            - --health-probe-bind-address=:8081
+            - --leader-elect
+          command:
+            - /usr/local/bin/manager
+  {{ if .Values.ccAPIURL }}
+          env:
+          - name: "CC_API_BASE_URL"
+            value: {{ .Values.ccAPIURL | quote}}
+  {{ end }}
+          image: {{ include "calico-cloud.image" . }}
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          name: {{ .Chart.Name }}
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+          {{ if .Values.caBundleSecretName }}
+            - name: ca-certificates
+              mountPath: /etc/ssl/certs
+          {{ end }}
+          {{ range $secret := .Values.imagePullSecrets }}
+            - name: {{ $secret.name }}
+              mountPath: /image-pull-secrets/{{ $secret.name }}
+          {{ end }}
+      serviceAccountName: calico-cloud
+      terminationGracePeriodSeconds: 10
+      nodeSelector:
+        kubernetes.io/os: linux

@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: calico-cloud-namespace-creator
+  namespace: calico-cloud
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: calico-cloud-namespace-creator
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: hook-succeeded
+rules:
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["create", "get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: calico-cloud-namespace-creator
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+subjects:
+  - kind: ServiceAccount
+    name: calico-cloud-namespace-creator
+    namespace: calico-cloud
+roleRef:
+  kind: ClusterRole
+  name: calico-cloud-namespace-creator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: calico-cloud-install-create-namespaces
+  namespace: calico-cloud
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  template:
+    spec:
+      serviceAccountName: calico-cloud-namespace-creator
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{ if .Values.caBundleSecretName }}
+        - name: ca-certificates
+          secret:
+            secretName: {{ .Values.caBundleSecretName }}
+      {{ end }}
+      {{ range $secret := .Values.imagePullSecrets }}
+        - name: {{ $secret.name }}
+          secret:
+            secretName: {{ $secret.name }}
+      {{ end }}
+      containers:
+        - name: create-namespaces
+          command:
+            - /bin/bash
+            - -c
+            - |
+              NAMESPACES=("tigera-operator" "tigera-operator-cloud" "tigera-license" "tigera-access" "calico-system" "tigera-prometheus" )
+              {{- if ne "Disabled" ((.Values.installer.components).imageAssurance).state }}
+              NAMESPACES+=("tigera-image-assurance")
+              {{- end }}
+              {{- if ne "Disabled" ((.Values.installer.components).securityPosture).state }}
+              NAMESPACES+=("tigera-risk-system")
+              {{- end }}
+              {{- if ne "Disabled" ((.Values.installer.components).runtimeSecurity).state }}
+              NAMESPACES+=("tigera-runtime-security")
+              {{- end }}
+              for namespace in "${NAMESPACES[@]}"; do
+              kubectl get ns $namespace || kubectl create ns $namespace
+              done
+          image: {{ include "calico-cloud.image" . }}
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+          {{ if .Values.caBundleSecretName }}
+            - name: ca-certificates
+              mountPath: /etc/ssl/certs
+          {{ end }}
+          {{ range $secret := .Values.imagePullSecrets }}
+            - name: {{ $secret.name }}
+              mountPath: /image-pull-secrets/{{ $secret.name }}
+          {{ end }}
+      nodeSelector:
+        kubernetes.io/os: linux

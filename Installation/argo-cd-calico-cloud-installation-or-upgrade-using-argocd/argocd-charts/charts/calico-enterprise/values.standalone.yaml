@@ -1,0 +1,38 @@
+standalonecluster:
+  enabled: true
+tigera-operator:
+  imagePullSecrets: # ideally we should not need this but there could be a bug in the helm-charts
+    tigera-pull-secret: unusedvalue
+  installation:
+    enabled: true
+    variant: TigeraSecureEnterprise
+    kubernetesProvider: "EKS"
+    imagePullSecrets:
+      - name: tigera-pull-secret
+  
+  defaultFelixConfiguration:
+    enabled: true
+    floatingIPs: Disabled
+    flowLogsEnableHostEndpoint: true
+    flowLogsFlushInterval: 10s
+    healthPort: 9099
+    logDebugFilenameRegex: serviceindex|calc_graph
+    logSeverityScreen: Debug
+    prometheusMetricsEnabled: true
+    reportingInterval: 0s
+    routeTableRange:
+      max: 99
+      min: 65
+
+  monitor:
+    enabled: true
+    externalPrometheus:
+      namespace: monitoring
+      serviceMonitor:
+        labels:
+          release: prometheus-stack
+
+
+  tigera-prometheus-operator:
+    enabled: false
+

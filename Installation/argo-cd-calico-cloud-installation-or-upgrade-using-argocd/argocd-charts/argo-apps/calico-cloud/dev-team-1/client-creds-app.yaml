@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: client-credentials 
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: dev-team-1
+  destination:
+    name: cc-mngd-1
+    namespace: calico-cloud 
+  source:
+    path: charts/client-credentials/dev-team-1-creds
+    repoURL: 'git@github.com:VerodaClient/argocd-charts.git'
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      selfHeal: true
+    retry:
+      limit: 35
+      backoff:
+        duration: 30s
+        factor: 1
+        maxDuration: 3m
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: beats.beat.k8s.elastic.co
+      jsonPointers:
+        - /spec
+    - kind: PersistentVolume
+      jsonPointers:
+        - /spec/claimRef/resourceVersion
+        - /spec/claimRef/uid
+        - /status/lastPhaseTransitionTime
+

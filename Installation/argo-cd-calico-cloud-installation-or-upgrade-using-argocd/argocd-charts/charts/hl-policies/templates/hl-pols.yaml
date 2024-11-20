@@ -1,0 +1,978 @@
+apiVersion: crd.projectcalico.org/v1
+kind: Tier
+metadata:
+  name: security
+spec:
+  order: 100
+---
+apiVersion: crd.projectcalico.org/v1
+kind: Tier
+metadata:
+  name: platform
+spec:
+  order: 200
+---
+apiVersion: crd.projectcalico.org/v1
+kind: Tier
+metadata:
+  name: infra
+spec:
+  order: 300
+---
+
+apiVersion: v1
+kind: List
+items:
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-acm-pca
+    name: aws-acm-pca
+  spec:
+    allowedEgressDomains:
+    - acm-pca.eu-central-1.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-autoscaling
+    name: aws-autoscaling
+  spec:
+    allowedEgressDomains:
+    - autoscaling.eu-central-1.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-dms
+    name: aws-dms
+  spec:
+    allowedEgressDomains:
+    - dms.eu-central-1.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-ec2
+    name: aws-ec2
+  spec:
+    allowedEgressDomains:
+    - ec2.eu-central-1.amazonaws.com
+    - elasticloadbalancing.eu-central-1.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-ecr
+    name: aws-ecr
+  spec:
+    allowedEgressDomains:
+    - api.ecr.eu-central-1.amazonaws.com
+    - '*.dkr.ecr.eu-central-1.amazonaws.com'
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-iam
+    name: aws-iam
+  spec:
+    allowedEgressDomains:
+    - iam.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-imds
+    name: aws-imds
+  spec:
+    nets:
+    - 169.254.169.254/32
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-kms
+    name: aws-kms
+  spec:
+    allowedEgressDomains:
+    - kms.eu-central-1.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-observability
+    name: aws-observability
+  spec:
+    allowedEgressDomains:
+    - aps-workspaces.eu-central-1.amazonaws.com
+    - monitoring.eu-central-1.amazonaws.com
+    - tagging.eu-central-1.amazonaws.com
+    - oam.eu-central-1.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-rds
+    name: aws-rds
+  spec:
+    allowedEgressDomains:
+    - rds.eu-central-1.amazonaws.com
+    - rds.eu-central-1.api.aws
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-route53
+    name: aws-route53
+  spec:
+    allowedEgressDomains:
+    - route53.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-securityhub
+    name: aws-securityhub
+  spec:
+    allowedEgressDomains:
+    - securityhub.eu-central-1.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: aws-sts
+    name: aws-sts
+  spec:
+    allowedEgressDomains:
+    - sts.eu-central-1.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: fis-platform-container-runtime
+    name: fis-platform-container-runtime
+  spec:
+    nets:
+    - 100.64.8.0/23
+    - 100.64.10.0/23
+    - 100.64.12.0/23
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: fis-platform-container-runtime-rds
+    name: fis-platform-container-runtime-rds
+  spec:
+    allowedEgressDomains:
+    - fis-platform-container-runtime-rds-001.cluster-camn4mpfycmh.eu-central-1.rds.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: fis-platform-observability-rds
+    name: fis-platform-observability-rds
+  spec:
+    allowedEgressDomains:
+    - fis-platform-observability-rds-001.cluster-camn4mpfycmh.eu-central-1.rds.amazonaws.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: fis-platform-opensearch
+    name: fis-platform-opensearch
+  spec:
+    allowedEgressDomains:
+    - opensearch.internal.devmgmt.fps.hlag.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: hlag-gitlab
+    name: hlag-gitlab
+  spec:
+    allowedEgressDomains:
+    - gitlab.hlag.altemista.cloud
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: microsoft-azure-ad
+    name: microsoft-azure-ad
+  spec:
+    allowedEgressDomains:
+    - login.microsoftonline.com
+    - graph.microsoft.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: microsoft-teams
+    name: microsoft-teams
+  spec:
+    allowedEgressDomains:
+    - hlag.webhook.office.com
+    - '*.westeurope.logic.azure.com'
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: public-container-registry
+    name: public-container-registry
+  spec:
+    allowedEgressDomains:
+    - index.docker.io
+    - auth.docker.io
+    - quay.io
+    - ghcr.io
+    - '*.quay.io'
+    - public.ecr.aws
+    - registry.k8s.io
+    - production.cloudflare.docker.com
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: www-elastic
+    name: www-elastic
+  spec:
+    allowedEgressDomains:
+    - geoip.elastic.co
+    - epr.elastic.co
+    - elastic.co
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      target: www-github
+    name: www-github
+  spec:
+    allowedEgressDomains:
+    - '*.github.com'
+    - github.com
+    - '*.github.io'
+    - pkg-containers.githubusercontent.com
+---
+apiVersion: v1
+kind: List
+items:
+- apiVersion: crd.projectcalico.org/v1
+  kind: NetworkSet
+  metadata:
+    labels:
+      app.kubernetes.io/managed-by: prometheus-operator
+      app.kubernetes.io/name: kubelet
+      endpoints.projectcalico.org/serviceName: prometheus-kubelet
+      k8s-app: kubelet
+    name: kse.prometheus-kubelet
+    namespace: kube-system
+  spec:
+    nets:
+    - 10.98.17.56
+    - 10.98.19.197
+    - 10.98.21.88
+---
+apiVersion: v1
+kind: List
+items:
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      projectcalico.org/tier: default
+    name: default.explicit-deny
+  spec:
+    egress:
+    - action: Allow
+      destination: {}
+      source: {}
+    ingress:
+    - action: Allow
+      destination: {}
+      source: {}
+    namespaceSelector: (has(projectcalico.org/name) && projectcalico.org/name not
+      in { "kube-system", "calico-system", "tigera-system" })
+    order: 1100
+    selector: ""
+    serviceAccountSelector: ""
+    tier: default
+    types:
+    - Ingress
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      projectcalico.org/tier: platform
+    name: platform.access-to-core-dns
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        ports:
+        - "53"
+        selector: k8s-app == "kube-dns"
+      protocol: UDP
+      source: {}
+    namespaceSelector: ""
+    order: 10
+    selector: ""
+    serviceAccountSelector: ""
+    tier: platform
+    types:
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      projectcalico.org/tier: platform
+    name: platform.access-to-zone-infra
+  spec:
+    applyOnForward: false
+    doNotTrack: false
+    ingress:
+    - action: Allow
+      destination:
+        ports:
+        - "53"
+        selector: k8s-app == "kube-dns"
+      protocol: UDP
+      source:
+        namespaceSelector: app.kubernetes.io/zone == "app" || kubernetes.io/metadata.name
+          == "calico-system" || kubernetes.io/metadata.name == "tigera-eck-operator"
+    - action: Allow
+      destination:
+        ports:
+        - "9443"
+        selector: app.kubernetes.io/instance == "aws-load-balancer-controller"
+      protocol: TCP
+      source:
+        selector: component == "apiserver"
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "ingress-nginx"
+        ports:
+        - "8443"
+      protocol: TCP
+      source:
+        selector: component == "apiserver"
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "ingress-nginx"
+        ports:
+        - "443"
+        - "80"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "prometheus"
+        ports:
+        - "9090"
+      protocol: TCP
+      source:
+        selector: component == "apiserver"
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "cert-manager"
+        ports:
+        - "10250"
+        - "6443"
+      protocol: TCP
+      source: {}
+    namespaceSelector: app.kubernetes.io/zone == "infra" || kubernetes.io/metadata.name
+      == "kube-system"
+    order: 5
+    preDNAT: false
+    selector: ""
+    serviceAccountSelector: ""
+    tier: platform
+    types:
+    - Ingress
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      projectcalico.org/tier: platform
+    name: platform.pass
+  spec:
+    egress:
+    - action: Pass
+      destination: {}
+      source: {}
+    ingress:
+    - action: Pass
+      destination: {}
+      source: {}
+    order: 255
+    tier: platform
+    types:
+    - Egress
+    - Ingress
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      projectcalico.org/tier: platform
+    name: platform.zone-infra-isolation
+  spec:
+    applyOnForward: false
+    doNotTrack: false
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: app.kubernetes.io/zone == "app"
+      source:
+        namespaceSelector: kubernetes.io/metadata.name == "prometheus" || kubernetes.io/metadata.name
+          == "ingress-nginx"
+    - action: Allow
+      destination:
+        namespaceSelector: app.kubernetes.io/zone == "infra" || kubernetes.io/metadata.name
+          == "kube-system"
+      source: {}
+    ingress:
+    - action: Allow
+      destination: {}
+      source:
+        namespaceSelector: app.kubernetes.io/zone == "infra" || kubernetes.io/metadata.name
+          == "kube-system"
+    namespaceSelector: app.kubernetes.io/zone == "infra" || kubernetes.io/metadata.name
+      == "kube-system" || kubernetes.io/metadata.name == "kube-node-lease"
+    order: 20
+    preDNAT: false
+    selector: ""
+    serviceAccountSelector: ""
+    tier: platform
+    types:
+    - Ingress
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: GlobalNetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: calico-enterprise
+      projectcalico.org/tier: security
+    name: security.pass
+  spec:
+    egress:
+    - action: Pass
+      destination: {}
+      source: {}
+    ingress:
+    - action: Pass
+      destination: {}
+      source: {}
+    order: 255
+    tier: security
+    types:
+    - Egress
+    - Ingress
+
+---
+apiVersion: v1
+kind: List
+items:
+- apiVersion: projectcalico.org/v3
+  kind: NetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: argo-events
+      projectcalico.org/tier: infra
+    name: infra.argo-events
+    namespace: argo-events
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "default"
+        ports:
+        - 443
+        selector: component == "apiserver"
+      protocol: TCP
+      source: {}
+    order: 10
+    tier: infra
+    types:
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: NetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/component: argo-workflows
+      app.kubernetes.io/instance: argo-workflows
+      app.kubernetes.io/name: argo-workflows
+      app.kubernetes.io/part-of: argo-workflows
+    name: infra.argo-workflows
+    namespace: argo
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "default"
+        ports:
+        - "443"
+        selector: component == "apiserver"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "80"
+        selector: target == "aws-imds"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-ec2"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-sts"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-kms"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        domains:
+        - argo-workflows.internal.devmgmt.fps.hlag.com
+        ports:
+        - "443"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "hlag-gitlab"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "microsoft-azure-ad"
+      protocol: TCP
+      source: {}
+    order: 10
+    selector: ""
+    serviceAccountSelector: ""
+    tier: infra
+    types:
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: NetworkPolicy
+  metadata:
+    name: infra.argocd
+    namespace: argocd
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "default"
+        ports:
+        - "443"
+        selector: component == "apiserver"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-ecr"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        domains:
+        - prod-eu-central-1-starport-layer-bucket.s3.eu-central-1.amazonaws.com
+        - s3-r-w.eu-central-1.amazonaws.com
+        ports:
+        - "443"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "hlag-gitlab"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-sts"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-kms"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "microsoft-azure-ad"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "argocd"
+        ports:
+        - "26379"
+        - "6379"
+      protocol: TCP
+      source: {}
+    order: 10
+    selector: ""
+    serviceAccountSelector: ""
+    tier: infra
+    types:
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: NetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: cert-manager
+    name: infra.cert-manager
+    namespace: cert-manager
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "default"
+        ports:
+        - "443"
+        selector: component == "apiserver"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-sts"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-acm-pca"
+      protocol: TCP
+      source: {}
+    order: 10
+    selector: ""
+    serviceAccountSelector: ""
+    tier: infra
+    types:
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: NetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: external-dns
+      app.kubernetes.io/name: external-dns
+      app.kubernetes.io/version: 0.14.2
+      projectcalico.org/tier: infra
+    name: infra.external-dns
+    namespace: external-dns
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "default"
+        ports:
+        - "443"
+        selector: component == "apiserver"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-route53"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-sts"
+      protocol: TCP
+      source: {}
+    order: 10
+    selector: ""
+    serviceAccountSelector: app.kubernetes.io/name == "external-dns"
+    tier: infra
+    types:
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: NetworkPolicy
+  metadata:
+    labels:
+      projectcalico.org/tier: infra
+    name: infra.gitlab-runner
+    namespace: gitlab-runner
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "hlag-gitlab"
+      protocol: TCP
+      source: {}
+    order: 10
+    selector: ""
+    serviceAccountSelector: app == 'gitlab-runner'
+    tier: infra
+    types:
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: NetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/component: grafana
+      app.kubernetes.io/instance: grafana
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/version: 11.1.0
+    name: infra.grafana
+    namespace: grafana
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "9094"
+        selector: target == "fis-platform-container-runtime"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "tigera-prometheus"
+        ports:
+        - "9095"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "5432"
+        selector: target == "fis-platform-observability-rds"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "5432"
+        selector: target == "fis-platform-container-runtime-rds"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-observability"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-ec2"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "microsoft-teams"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "microsoft-azure-ad"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-sts"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "25"
+        selector: target == "hlag-mail"
+      protocol: TCP
+      source: {}
+    order: 10
+    selector: ""
+    serviceAccountSelector: app.kubernetes.io/name == 'grafana'
+    tier: infra
+    types:
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: NetworkPolicy
+  metadata:
+    labels:
+      app.kubernetes.io/instance: ingress-nginx
+      app.kubernetes.io/name: ingress-nginx
+      app.kubernetes.io/version: 1.11.1
+    name: infra.ingress-nginx
+    namespace: ingress-nginx
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "default"
+        ports:
+        - "443"
+        selector: component == "apiserver"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "tigera-manager"
+        ports:
+        - "9443"
+      protocol: TCP
+      source: {}
+    order: 10
+    selector: ""
+    serviceAccountSelector: ""
+    tier: infra
+    types:
+    - Egress
+- apiVersion: crd.projectcalico.org/v1
+  kind: NetworkPolicy
+  metadata:
+    name: infra.prometheus
+    namespace: prometheus
+  spec:
+    egress:
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "11001"
+        - "11002"
+        selector: target == "fis-platform-msk-db2" || target == "fis-platform-msk-plg"
+          || target == "fis-platform-msk-sbm"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "default"
+        ports:
+        - "443"
+        selector: component == "apiserver"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-sts"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: global()
+        ports:
+        - "443"
+        selector: target == "aws-observability"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "tigera-license-agent"
+        ports:
+        - "9081"
+      protocol: TCP
+      source: {}
+    - action: Allow
+      destination:
+        namespaceSelector: kubernetes.io/metadata.name == "calico-system"
+        ports:
+        - "9094"
+      protocol: TCP
+      source: {}
+    order: 10
+    selector: ""
+    serviceAccountSelector: ""
+    tier: infra
+    types:
+    - Egress

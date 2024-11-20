@@ -1,0 +1,6 @@
+mgmtclustercert:
+  enabled: true
+ingress-nginx:
+  namespaceOverride: ingress-nginx
+  tcp:
+    9449: tigera-manager/tigera-manager-mcm:9449

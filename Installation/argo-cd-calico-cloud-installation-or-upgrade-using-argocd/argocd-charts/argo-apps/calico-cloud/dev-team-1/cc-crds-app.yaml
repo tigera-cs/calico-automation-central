@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: calico-cloud-crds
+  namespace: argocd
+  annotations:
+      argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: dev-team-1
+  source:
+    path: charts/calico-cloud-crds
+    repoURL: 'git@github.com:VerodaClient/argocd-charts.git'
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+      - values.yaml
+  destination:
+    name: cc-mngd-1
+    namespace: calico-cloud
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+

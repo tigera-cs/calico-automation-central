@@ -1,0 +1,196 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  creationTimestamp: null
+  name: installers.operator.calicocloud.io
+spec:
+  group: operator.calicocloud.io
+  names:
+    kind: Installer
+    listKind: InstallerList
+    plural: installers
+    singular: installer
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: Installer is the Schema for the installers API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: InstallerSpec defines the desired state of Installer
+            properties:
+              calicoCloudVersion:
+                description: CalicoCloudVersion is the request version of calico cloud
+                  to be installed. If specified then the specified value will be used
+                  as the version of calico cloud to be installed. If not specified
+                  or empty, the latest version will be installed.
+                type: string
+              clusterName:
+                description: "ClusterName is the name this cluster should appear as
+                  in the Calico Cloud UI. Note that ClusterName cannot be modified
+                  once it is set. \n Previously, the clusterName was controlled by
+                  the resource name stored in metadata.name. If both values are set,
+                  ClusterName takes priority."
+                type: string
+              components:
+                description: InstallerComponents contains configuration settings for
+                  calico cloud components
+                properties:
+                  imageAssurance:
+                    description: ImageAssurance contains configuration settings for
+                      Image Assurance
+                    properties:
+                      state:
+                        default: Enabled
+                        description: State sets component state to Enabled or Disabled
+                        enum:
+                        - Enabled
+                        - Disabled
+                        type: string
+                    type: object
+                  runtimeSecurity:
+                    description: RuntimeSecurity contains configuration settings for
+                      Runtime Security
+                    properties:
+                      state:
+                        default: Unmanaged
+                        description: State sets component state to Enabled, Disabled
+                          or Unmanaged
+                        enum:
+                        - Enabled
+                        - Disabled
+                        - Unmanaged
+                        type: string
+                    type: object
+                  securityPosture:
+                    description: SecurityPosture contains configuration settings for
+                      Security Posture
+                    properties:
+                      state:
+                        default: Enabled
+                        description: State sets component state to Enabled or Disabled
+                        enum:
+                        - Enabled
+                        - Disabled
+                        type: string
+                    type: object
+                type: object
+              imagePath:
+                description: ImagePath allows for the path part of an image to be
+                  specified. If specified then the specified value will be used as
+                  the image path for each image. If not specified or empty, the default
+                  for each image will be used.
+                type: string
+              ownerEmail:
+                description: OwnerEmail is the organization's owner email
+                type: string
+              registry:
+                description: Registry is the default Docker registry used for component
+                  Docker images. If specified then all images will be pulled from
+                  this registry. If not specified or empty then the default registries
+                  will be used.
+                type: string
+              resourceVersion:
+                description: ResourceVersion is a random value that, when modified,
+                  will force a reinstall.
+                type: string
+              uploadDiags:
+                description: UploadDiags enables automatic upload of diagnostics bundles
+                  to Calico Cloud, viewable by the support team.
+                type: boolean
+            type: object
+          status:
+            description: InstallerStatus defines the observed state of Installer
+            properties:
+              calicoCloudVersion:
+                type: string
+              clusterName:
+                type: string
+              components:
+                description: InstallerComponents contains configuration settings for
+                  calico cloud components
+                properties:
+                  imageAssurance:
+                    description: ImageAssurance contains configuration settings for
+                      Image Assurance
+                    properties:
+                      state:
+                        default: Enabled
+                        description: State sets component state to Enabled or Disabled
+                        enum:
+                        - Enabled
+                        - Disabled
+                        type: string
+                    type: object
+                  runtimeSecurity:
+                    description: RuntimeSecurity contains configuration settings for
+                      Runtime Security
+                    properties:
+                      state:
+                        default: Unmanaged
+                        description: State sets component state to Enabled, Disabled
+                          or Unmanaged
+                        enum:
+                        - Enabled
+                        - Disabled
+                        - Unmanaged
+                        type: string
+                    type: object
+                  securityPosture:
+                    description: SecurityPosture contains configuration settings for
+                      Security Posture
+                    properties:
+                      state:
+                        default: Enabled
+                        description: State sets component state to Enabled or Disabled
+                        enum:
+                        - Enabled
+                        - Disabled
+                        type: string
+                    type: object
+                type: object
+              imagePath:
+                type: string
+              message:
+                type: string
+              registry:
+                type: string
+              resourceVersion:
+                type: string
+              state:
+                description: InstallerState is the state of the installer.
+                type: string
+            required:
+            - clusterName
+            - message
+            - resourceVersion
+            - state
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

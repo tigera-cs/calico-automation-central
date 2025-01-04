@@ -1,0 +1,94 @@
+imagePullSecrets:
+  tigera-pull-secret: '${calico_enterprise_pull_secret}'
+
+installation:
+  enabled: true
+  variant: TigeraSecureEnterprise
+  kubernetesProvider: "EKS"
+  cni:
+    type: Calico
+    ipam:
+      type: Calico
+  calicoNetwork:
+    bgp: ${calico_network_bgp}
+    ipPools:
+    - cidr: ${pod_cidr}
+      encapsulation: ${calico_encap}
+
+tigera-prometheus-operator:
+  imagePullSecrets:
+    tigera-pull-secret: '${calico_enterprise_pull_secret}'
+
+logStorage:
+  enabled: true
+  nodes:
+    count: 3
+    resourceRequirements:
+      requests:
+        storage: 100Gi
+  indices:
+    replicas: 1
+  retention:
+    auditReports: 3
+    complianceReports: 3
+    snapshots: 3
+    flows: 3
+
+defaultFelixConfiguration:
+  enabled: true
+  flowLogsFlushInterval: 10s
+  awsSrcDstCheck: Disable
+  awsSecondaryIPSupport: Enabled
+  flowLogsFlushInterval: 15s
+  flowLogsFileAggregationKindForAllowed: 1
+  flowLogsCollectTcpStats: true
+  flowLogsEnableHostEndpoint: true
+  dnsLogsFlushInterval: 15s
+  dnsTrustedServers:
+  - k8s-service:kube-dns
+  - 10.0.0.2
+  egressIPSupport: EnabledPerNamespaceOrPerPod
+  logSeverityScreen: Info
+  captureRotationSeconds: 3600
+  l7LogsFlushInterval: 15s
+  l7LogsFileAggregationHTTPHeaderInfo: IncludeL7HTTPHeaderInfo
+  policySyncPathPrefix: /var/run/nodeagent
+  floatingIPs: Disabled
+  prometheusMetricsEnabled: true
+  prometheusReporterEnabled: true
+  prometheusReporterPort: 9081
+  failsafeInboundHostPorts:
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 22
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 68
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 179
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 2379
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 6443
+  failsafeOutboundHostPorts:
+  - protocol: udp
+    net: 0.0.0.0/0
+    port: 53
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 67
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 179
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 2379
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 2380
+  - protocol: tcp
+    net: 0.0.0.0/0
+    port: 6443

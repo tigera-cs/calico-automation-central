@@ -1,0 +1,13 @@
+installation:
+  kubernetesProvider: "EKS"
+  cni:
+    type: Calico
+    ipam:
+      type: Calico
+  calicoNetwork:
+    linuxDataplane: BPF
+    hostPorts: Disabled
+    bgp: Disabled
+    ipPools:
+    - cidr: ${pod_cidr}
+      encapsulation: ${calico_encap}

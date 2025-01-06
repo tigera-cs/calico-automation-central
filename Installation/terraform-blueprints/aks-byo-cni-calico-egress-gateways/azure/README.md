@@ -1,13 +1,25 @@
-# AKS BYO CNI Cluster With Custom Networking and Egress Gateways
+# AKS BYO CNI with Calico Egress Gateways Terraform Blueprint
 
+This repository provides a Terraform blueprint for deploying an Azure Kubernetes Service (AKS) cluster with a Bring Your Own (BYO) Container Network Interface (CNI) setup. It integrates Calico for advanced network policy capabilities and implements egress gateways for controlled outbound traffic.
 
-## Prerequisites:
+## Overview
 
-First, ensure that you have installed the following tools locally.
+The BYO CNI setup allows users to customize their networking stack within an AKS cluster. Combined with Calico, this setup enables fine-grained network policy enforcement and control over egress traffic using egress gateways.
 
-1. [azure cli](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
-2. [kubectl](https://Kubernetes.io/docs/tasks/tools/)
-3. [terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+## Prerequisites
+
+Ensure the following prerequisites are met before deploying the AKS cluster:
+
+- **Azure Subscription**: Active subscription with necessary permissions.
+- **Terraform**: Installed on your system. [Download Terraform](https://www.terraform.io/downloads.html)
+- **Azure CLI**: Installed and authenticated. [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- **kubectl**: Installed for Kubernetes cluster management. [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+
+##  Features
+
+- BYO CNI: Customize the networking stack to meet specific requirements.
+- Calico Integration: Leverage Calico for advanced network policies and secure egress traffic control.
+-	Egress Gateways: Control outbound traffic from specific workloads for compliance and enhanced security.
 
 ### Deploy
 
@@ -57,3 +69,8 @@ To teardown and remove the resources created in this example:
 ```sh
 terraform destroy --auto-approve
 ```
+
+## Additional Resources
+- [Calico Documentation](https://docs.tigera.io/)
+- [Azure Kubernetes Service (AKS) Documentation](https://learn.microsoft.com/en-us/azure/aks/)
+- [Terraform AKS Module](https://registry.terraform.io/modules/Azure/aks/azurerm/latest)

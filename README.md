@@ -7,7 +7,7 @@ While we strive to ensure the scripts are helpful and functional, they are not p
 _They are not officially supported by Tigera._\
 _Use them at your own discretion and ensure thorough testing in your environment before deploying them.\
 No guarantees are provided regarding their suitability, performance, or maintenance.\
-We encourage you to explore these resources and adapt them as needed to meet your specific use cases._\
+We encourage you to explore these resources and adapt them as needed to meet your specific use cases._
 
 # Repository Structure
 

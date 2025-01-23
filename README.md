@@ -1,4 +1,4 @@
-# Calico Automation Center
+# Calico Automation Central
 ![Calico Enterprise](https://docs.tigera.io/img/calico-enterprise-logo.webp)\
 **Disclaimer**
 

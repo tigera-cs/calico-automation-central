@@ -3,11 +3,11 @@
 **Disclaimer**
 This repository is a collection of automation scripts and operational process documents designed to assist users of Calico Enterprise, Calico Cloud, and Calico Open Source.
 These resources are provided by Tigera support and delivery team members as a voluntary effort to benefit our customers and the broader community.
-While we strive to ensure the scripts are helpful and functional, they are not part of Tigera’s official product offerings. As such:
-_They are not officially supported by Tigera._
-_Use them at your own discretion and ensure thorough testing in your environment before deploying them.
-No guarantees are provided regarding their suitability, performance, or maintenance.
-We encourage you to explore these resources and adapt them as needed to meet your specific use cases._
+While we strive to ensure the scripts are helpful and functional, they are not part of Tigera’s official product offerings. As such:\
+_They are not officially supported by Tigera._\
+_Use them at your own discretion and ensure thorough testing in your environment before deploying them.\
+No guarantees are provided regarding their suitability, performance, or maintenance.\
+We encourage you to explore these resources and adapt them as needed to meet your specific use cases._\
 
 # Repository Structure
 

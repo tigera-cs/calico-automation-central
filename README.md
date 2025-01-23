@@ -1,6 +1,7 @@
-# Calico Automation Center\
+# Calico Automation Center
 ![Calico Enterprise](https://docs.tigera.io/img/calico-enterprise-logo.webp)\
 **Disclaimer**\
+
 This repository is a collection of automation scripts and operational process documents designed to assist users of Calico Enterprise, Calico Cloud, and Calico Open Source.
 These resources are provided by Tigera support and delivery team members as a voluntary effort to benefit our customers and the broader community.
 While we strive to ensure the scripts are helpful and functional, they are not part of Tigera’s official product offerings. As such:\

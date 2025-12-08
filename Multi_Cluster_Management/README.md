@@ -55,8 +55,8 @@ https://github.com/tigera-solutions/cent-mcm-overlay/blob/main/modules/module-1-
 
 - Clone this repository to your local machine: 
 ```bash
-git clone https://github.com/tigera-cs/calico-automation-central/tree/main/Multi_Cluster_Management.git
-cd CE-Cluster-Mesh-EKS
+git clone https://github.com/tigera-cs/calico-automation-central.git
+cd Multi_Cluster_Management/CE-Cluster-Mesh-EKS
 ```
 - Review and adjust variables in the main script(s), VPC cidr values under the variables section,                                                                           "
    to ensure to have a unique VPC cidrs, better to modify them to avoid conflicts.
